@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TRAVEL · Discover Norway Beyond The Ordinary</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <style>
+    /* ========================================================
+       COLOR SYSTEM (NORWAY CINEMATIC PALETTE)
+       Midnight navy:  #0B1424
+       Deep blue:      #172B46
+       Lavender:       #7779A8
+       Warm peach:     #F4A58A
+       Coral:          #E87868
+       Sunset orange:  #F28B52
+       Golden:         #F5B95B
+       Warm white:     #F8F5F0
+       ======================================================== */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: #0B1424;
+      color: #F8F5F0;
+    }
+
+    body {
+      background-color: transparent; /* Continuous global background visibility */
+      color: #F8F5F0;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+      position: relative;
+    }
+
+    ::selection {
+      background-color: #F4A58A;
+      color: #0B1424;
+    }
+
+    /* ========================================================
+       1. ONE SINGLE FIXED GLOBAL CINEMATIC BACKGROUND LAYER
+       ======================================================== */
+    #globalCinematicBg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    #frameCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    /* Subtle dark atmospheric translucent overlay above background & below content
+       Keeps clouds faintly visible throughout every section while ensuring high text contrast */
+    .global-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(11, 20, 36, 0.22) 0%,
+        rgba(11, 20, 36, 0.32) 22%,
+        rgba(11, 20, 36, 0.40) 50%,
+        rgba(11, 20, 36, 0.48) 78%,
+        rgba(11, 20, 36, 0.56) 100%
+      );
+      pointer-events: none;
+    }
+
+    /* Soft ambient warmth from golden clouds */
+    .global-warm-glow {
+      position: absolute;
+      inset: 0;
+      mix-blend-mode: soft-light;
+      background: radial-gradient(ellipse at 70% 35%, rgba(244, 165, 138, 0.32) 0%, rgba(232, 120, 104, 0.12) 50%, transparent 75%);
+      pointer-events: none;
+    }
+
+    /* Content wrapper sits comfortably above fixed background */
+    .content-wrapper {
+      position: relative;
+      z-index: 10;
+      width: 100%;
+    }
+
+    /* ========================================================
+       UNIFIED PREMIUM GLASSMORPHISM SYSTEM
+       ======================================================== */
+    .glass-surface {
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      border-radius: 22px;
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .glass-surface:hover {
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.38);
+      transform: translateY(-4px);
+      box-shadow: 0 24px 48px -10px rgba(0, 0, 0, 0.42), inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+    }
+
+    /* Loading indicator line */
+    #loader {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.05);
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #F4A58A, #F5B95B, #F28B52);
+      box-shadow: 0 0 10px rgba(244, 165, 138, 0.85);
+      transition: width 0.1s linear;
+    }
+
+    .loader-hidden {
+      opacity: 0 !important;
+      visibility: hidden;
+    }
+
+    /* ========================================================
+       NAVIGATION BAR (CINEMATIC GLASS)
+       ======================================================== */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 50;
+      transition: all 350ms cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 24px 40px;
+      background: rgba(11, 20, 36, 0.20);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    header.scrolled {
+      background: rgba(11, 20, 36, 0.68);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+      padding: 15px 40px;
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35);
+    }
+
+    .nav-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand-logo {
+      color: #F8F5F0;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+
+    .brand-logo:hover {
+      opacity: 0.82;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 34px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: rgba(248, 245, 240, 0.82);
+      text-decoration: none;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      position: relative;
+      padding: 6px 0;
+      transition: color 0.3s;
+    }
+
+    .nav-link:hover, .nav-link.active {
+      color: #F8F5F0;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, transparent, #F4A58A, transparent);
+      border-radius: 2px;
+    }
+
+    .social-links {
+      display: flex;
+      align-items: center;
+      gap: 18px;
+    }
+
+    .social-icon {
+      color: rgba(248, 245, 240, 0.75);
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .social-icon:hover {
+      color: #F8F5F0;
+      transform: scale(1.15);
+    }
+
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
+      border: none;
+      color: #F8F5F0;
+      cursor: pointer;
+    }
+
+    /* ========================================================
+       SECTION 1: HERO SECTION
+       ======================================================== */
+    .hero-section {
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 130px 48px 38px 48px;
+      background: transparent;
+    }
+
+    .hero-main-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 1400px;
+      margin: auto 0;
+      padding-left: 4vw;
+    }
+
+    .hero-left-block {
+      max-width: 680px;
+    }
+
+    .hero-title {
+      font-size: clamp(48px, 7vw, 104px);
+      font-weight: 800;
+      line-height: 0.92;
+      letter-spacing: -0.03em;
+      text-transform: uppercase;
+      color: #F8F5F0;
+      margin-bottom: 24px;
+      text-shadow: 0 4px 24px rgba(0, 0, 0, 0.55);
+    }
+
+    .hero-title span {
+      display: block;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(15px, 1.25vw, 18px);
+      color: rgba(248, 245, 240, 0.88);
+      font-style: italic;
+      line-height: 1.6;
+      max-width: 440px;
+      margin-bottom: 34px;
+      text-shadow: 0 2px 12px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-buttons {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 28px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.38);
+      color: #F8F5F0;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      text-decoration: none;
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #F8F5F0;
+      color: #0B1424;
+      border-color: #F8F5F0;
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 14px 24px;
+      border-radius: 9999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      color: rgba(248, 245, 240, 0.9);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(255, 255, 255, 0.45);
+      color: #F8F5F0;
+      transform: translateY(-2px);
+    }
+
+    /* Vertical slider on right */
+    .hero-vertical-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      padding-right: 4vw;
+    }
+
+    .vertical-line {
+      position: absolute;
+      top: 8px;
+      bottom: 8px;
+      width: 1px;
+      background: rgba(255, 255, 255, 0.25);
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .slide-number-btn {
+      position: relative;
+      z-index: 10;
+      background: transparent;
+      border: none;
+      color: rgba(248, 245, 240, 0.45);
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.15em;
+      padding: 14px 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .slide-number-btn.active {
+      color: #F8F5F0;
+      transform: scale(1.3);
+      font-weight: 700;
+    }
+
+    .slide-number-btn.active::before {
+      content: '';
+      position: absolute;
+      left: -12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #F4A58A;
+      box-shadow: 0 0 10px #F4A58A;
+    }
+
+    /* Hero bottom coordinates bar */
+    .hero-bottom-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      padding-top: 18px;
+      font-family: monospace;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(248, 245, 240, 0.6);
+    }
+
+    .scroll-indicator-btn {
+      background: transparent;
+      border: none;
+      color: rgba(248, 245, 240, 0.75);
+      font-family: inherit;
+      font-size: 11px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: color 0.2s;
+    }
+
+    .scroll-indicator-btn:hover {
+      color: #F8F5F0;
+    }
+
+    /* ========================================================
+       SECTIONS 2 - 6: CONTINUOUS CINEMATIC SCROLLING
+       ======================================================== */
+    .section-wrap {
+      position: relative;
+      padding: 150px 36px;
+      background: transparent; /* No solid blocks - continuous cinematic flow */
+    }
+
+    .section-container {
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .section-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: #F4A58A;
+      display: block;
+      margin-bottom: 12px;
+    }
+
+    .section-header-title {
+      font-size: clamp(34px, 4.2vw, 58px);
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: -0.02em;
+      line-height: 1.04;
+      color: #F8F5F0;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .section-desc {
+      font-size: 15px;
+      color: rgba(248, 245, 240, 0.78);
+      line-height: 1.65;
+      max-width: 480px;
+    }
+
+    /* ========================================================
+       2. DESTINATION CARDS (PREMIUM FLOATING GLASS PANELS)
+       ======================================================== */
+    .destinations-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 34px;
+      margin-top: 56px;
+    }
+
+    .destination-card {
+      position: relative;
+      height: 520px;
+      border-radius: 24px;
+      overflow: hidden;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.38), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .destination-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.38);
+      box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.45), inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .destination-card img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 600ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .destination-card:hover img {
+      transform: scale(1.04);
+    }
+
+    .destination-card-scrim {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(11, 20, 36, 0.92) 0%, rgba(11, 20, 36, 0.2) 48%, rgba(0, 0, 0, 0.25) 100%);
+      transition: opacity 0.3s;
+    }
+
+    .card-category-badge {
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 10;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(248, 245, 240, 0.95);
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+    }
+
+    .card-arrow-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 10;
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.14);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #F8F5F0;
+      transition: all 0.3s ease;
+    }
+
+    .destination-card:hover .card-arrow-btn {
+      background: #F8F5F0;
+      color: #0B1424;
+      transform: scale(1.08);
+    }
+
+    .card-glass-panel {
+      position: absolute;
+      bottom: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      padding: 24px 26px;
+      border-radius: 20px;
+      background: rgba(11, 20, 36, 0.58);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 10px 32px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .destination-card:hover .card-glass-panel {
+      border-color: rgba(255, 255, 255, 0.4);
+      background: rgba(11, 20, 36, 0.65);
+    }
+
+    .card-meta-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .card-country-kicker {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: #F4A58A;
+    }
+
+    .card-season-text {
+      font-size: 10px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: rgba(248, 245, 240, 0.65);
+    }
+
+    .card-location-title {
+      font-size: 24px;
+      font-weight: 800;
+      letter-spacing: -0.01em;
+      color: #F8F5F0;
+      margin-bottom: 8px;
+    }
+
+    .card-description {
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(248, 245, 240, 0.82);
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .card-action-bar {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255, 255, 255, 0.16);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .card-action-link {
+      color: #F8F5F0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.3s;
+    }
+
+    .destination-card:hover .card-action-link {
+      color: #F4A58A;
+      transform: translateX(3px);
+    }
+
+    /* Small Feature Strip */
+    .feature-strip {
+      margin-top: 64px;
+      padding: 34px 38px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.09);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.32), inset 0 1px 0 0 rgba(255, 255, 255, 0.22);
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 36px;
+    }
+
+    .feature-strip-item {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .feature-strip-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+    }
+
+    .feature-strip-p {
+      font-size: 13px;
+      color: rgba(248, 245, 240, 0.78);
+      line-height: 1.5;
+    }
+
+    /* ========================================================
+       3. TOUR CARDS (SAME GLASSMORPHISM SYSTEM)
+       ======================================================== */
+    .tours-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 34px;
+      margin-top: 56px;
+    }
+
+    .tour-card {
+      padding: 38px 32px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.25);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 32px;
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .tour-card:hover {
+      transform: translateY(-4px);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: rgba(255, 255, 255, 0.38);
+      box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.42), inset 0 1px 0 0 rgba(255, 255, 255, 0.35);
+    }
+
+    .tour-tag-pill {
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #F4A58A;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 6px 14px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+    }
+
+    .tour-duration {
+      font-family: monospace;
+      font-size: 11px;
+      font-weight: 600;
+      color: rgba(248, 245, 240, 0.65);
+    }
+
+    .tour-card-title {
+      font-size: 22px;
+      font-weight: 800;
+      color: #F8F5F0;
+      margin: 16px 0 10px 0;
+      transition: color 0.3s;
+    }
+
+    .tour-card:hover .tour-card-title {
+      color: #F4A58A;
+    }
+
+    .tour-card-desc {
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(248, 245, 240, 0.8);
+    }
+
+    .tour-card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .btn-tour-inquire {
+      background: transparent;
+      border: none;
+      color: #F8F5F0;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .btn-tour-inquire:hover {
+      color: #F4A58A;
+      transform: translateX(3px);
+    }
+
+    /* ========================================================
+       4. TRAVEL AS POETRY (ABOUT SECTION)
+       ======================================================== */
+    .about-story-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: center;
+      margin-top: 52px;
+    }
+
+    .about-story-text p {
+      font-size: 16px;
+      line-height: 1.8;
+      color: rgba(248, 245, 240, 0.85);
+      margin-bottom: 24px;
+    }
+
+    .principles-card {
+      padding: 42px 38px;
+      border-radius: 24px;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 16px 40px -10px rgba(0, 0, 0, 0.35), inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .principles-card:hover {
+      background: rgba(255, 255, 255, 0.13);
+      border-color: rgba(255, 255, 255, 0.36);
+    }
+
+    .principle-item {
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.10);
+    }
+
+    .principle-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .principle-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #F8F5F0;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .principle-desc {
+      font-size: 13px;
+      color: rgba(248, 245, 240, 0.74);
+      padding-left: 28px;
+      line-height: 1.55;
+    }
+
+    /* ========================================================
+       5. BEGIN YOUR JOURNEY (CONTACT & INQUIRIES)
+       ======================================================== */
+    .contact-card {
+      max-width: 880px;
+      margin: 48px auto 0 auto;
+      padding: 52px 48px;
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.10);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 20px 50px -10px rgba(0, 0, 0, 0.4), inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
+      transition: all 300ms cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-label {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: rgba(248, 245, 240, 0.78);
+    }
+
+    .form-input, .form-textarea {
+      width: 100%;
+      padding: 15px 18px;
+      border-radius: 14px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.20);
+      color: #F8F5F0;
+      font-size: 14px;
+      outline: none;
+      transition: all 0.25s ease;
+    }
+
+    .form-input:focus, .form-textarea:focus {
+      border-color: #F4A58A;
+      background: rgba(255, 255, 255, 0.13);
+      box-shadow: 0 0 0 3px rgba(244, 165, 138, 0.22);
+    }
+
+    .form-submit-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 32px;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .btn-submit {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 36px;
+      border-radius: 9999px;
+      background: #F8F5F0;
+      color: #0B1424;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+
+    .btn-submit:hover {
+      background: #F4A58A;
+      color: #0B1424;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(244, 165, 138, 0.45);
+    }
+
+    /* ========================================================
+       6. FOOTER (FLOATING TRANSLUCENT SURFACE)
+       ======================================================== */
+    footer {
+      position: relative;
+      background: rgba(11, 20, 36, 0.52);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-top: 1px solid rgba(255, 255, 255, 0.14);
+      padding: 68px 36px;
+      font-size: 12px;
+      color: rgba(248, 245, 240, 0.65);
+    }
+
+    .footer-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 32px;
+    }
+
+    /* Destination Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(0, 0, 0, 0.82);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      width: 100%;
+      max-width: 820px;
+      border-radius: 26px;
+      overflow: hidden;
+      background: rgba(11, 20, 36, 0.90);
+      backdrop-filter: blur(28px);
+      -webkit-backdrop-filter: blur(28px);
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, 0.75), inset 0 1px 0 0 rgba(255, 255, 255, 0.24);
+      transform: scale(0.96);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-backdrop.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-hero-image {
+      position: relative;
+      height: 320px;
+      width: 100%;
+    }
+
+    .modal-hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .modal-close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #F8F5F0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .modal-close-btn:hover {
+      background: #F8F5F0;
+      color: #0B1424;
+    }
+
+    .modal-body {
+      padding: 36px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 900px) {
+      .about-story-grid {
+        grid-template-columns: 1fr;
+        gap: 40px;
+      }
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+      .nav-links, .social-links {
+        display: none;
+      }
+      .mobile-menu-btn {
+        display: block;
+      }
+      .hero-section {
+        padding: 100px 24px 24px 24px;
+      }
+      .hero-main-row {
+        padding-left: 0;
+      }
+      .hero-vertical-nav {
+        display: none;
+      }
+      .section-wrap {
+        padding: 100px 24px;
+      }
+      .contact-card {
+        padding: 36px 24px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ================= 1. ONE SINGLE FIXED GLOBAL CINEMATIC BACKGROUND ================= -->
+  <div id="globalCinematicBg">
+    <!-- Hardware-accelerated Canvas for 240-frame flight sequence -->
+    <canvas id="frameCanvas"></canvas>
+
+    <!-- Subtle dark translucent overlay above background & below content -->
+    <div class="global-overlay"></div>
+
+    <!-- Warm ambient sunset reflection -->
+    <div class="global-warm-glow"></div>
+  </div>
+
+  <!-- Top streaming progress indicator -->
+  <div id="loader">
+    <div id="progressBar"></div>
+  </div>
+
+  <!-- ================= FIXED NAVIGATION BAR ================= -->
+  <header id="mainNav">
+    <div class="nav-container">
+      <a href="#hero" class="brand-logo">TRAVEL</a>
+
+      <nav>
+        <ul class="nav-links">
+          <li><a href="#destinations" class="nav-link" data-section="destinations">POPULAR LOCATIONS</a></li>
+          <li><a href="#tours" class="nav-link" data-section="tours">TOURS</a></li>
+          <li><a href="#about" class="nav-link" data-section="about">ABOUT US</a></li>
+          <li><a href="#contact" class="nav-link" data-section="contact">CONTACT</a></li>
+        </ul>
+      </nav>
+
+      <div class="social-links">
+        <a href="#facebook" class="social-icon" aria-label="Facebook">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M9 8H6v4h3v12h5V12h3.642L18 8h-4V6.333C14 5.374 14.5 5 15.667 5H18V0h-3.889C9.944 0 9 1.481 9 4.333V8z"/></svg>
+        </a>
+        <a href="#instagram" class="social-icon" aria-label="Instagram">
+          <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+        </a>
+        <a href="#twitter" class="social-icon" aria-label="Twitter">
+          <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723c-.951.555-2.005.959-3.127 1.184a4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.936 9.936 0 0024 4.59z"/></svg>
+        </a>
+      </div>
+
+      <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle menu">
+        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- ================= ALL WEBSITE CONTENT SCROLLING ABOVE THE FIXED BACKGROUND ================= -->
+  <main class="content-wrapper">
+
+    <!-- ================= 1. HERO SECTION ================= -->
+    <section class="hero-section" id="hero">
+      <div></div> <!-- Top spacer -->
+
+      <div class="hero-main-row">
+        <div class="hero-left-block">
+          <h1 class="hero-title">
+            <span>EXPLORE</span>
+            <span>BEYOND</span>
+            <span>THE</span>
+            <span>ORDINARY</span>
+          </h1>
+
+          <p class="hero-subtitle">
+            Discover the quiet beauty of Norway.
+          </p>
+
+          <div class="hero-buttons">
+            <a href="#destinations" class="btn-primary">
+              <span>EXPLORE NORWAY</span>
+              <span>→</span>
+            </a>
+
+            <a href="#contact" class="btn-secondary">
+              <svg width="14" height="14" fill="none" stroke="#F4A58A" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+              <span>PLAN YOUR JOURNEY</span>
+            </a>
+
+            <button type="button" id="btnFlightSequence" class="btn-secondary" title="Watch flight transition through the window into sunrise clouds">
+              <svg width="14" height="14" fill="none" stroke="#F4A58A" stroke-width="2" viewBox="0 0 24 24"><path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/></svg>
+              <span id="flightSeqText">Flight Transition</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Vertical Slide Navigation -->
+        <div class="hero-vertical-nav">
+          <div class="vertical-line"></div>
+          <button class="slide-number-btn active" data-slide="01">01</button>
+          <button class="slide-number-btn" data-slide="02">02</button>
+          <button class="slide-number-btn" data-slide="03">03</button>
+          <button class="slide-number-btn" data-slide="04">04</button>
+        </div>
+      </div>
+
+      <!-- Coordinates bar -->
+      <div class="hero-bottom-bar">
+        <div>
+          <span>LAT 61.4720° N · LON 8.4689° E</span>
+          <span style="opacity: 0.35; margin: 0 10px;">|</span>
+          <span style="color: #F4A58A;">NORWAY · SCANDINAVIA</span>
+        </div>
+        <button type="button" class="scroll-indicator-btn" onclick="document.getElementById('destinations').scrollIntoView({behavior:'smooth'})">
+          <span>DISCOVER DESTINATIONS</span>
+          <span style="display:inline-block; animation: bounce 1.5s infinite;">↓</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ================= 2. POPULAR DESTINATIONS ================= -->
+    <section class="section-wrap" id="destinations">
+      <div class="section-container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.14);">
+          <div>
+            <span class="section-kicker">Curated Sanctuaries</span>
+            <h2 class="section-header-title">POPULAR DESTINATIONS</h2>
+          </div>
+          <p class="section-desc">
+            Fjords of emerald silence, towering coastal peaks, and Arctic skies where light becomes living art.
+          </p>
+        </div>
+
+        <!-- 3 Glassmorphism Destination Cards -->
+        <div class="destinations-grid">
+          <!-- Lofoten Card -->
+          <div class="destination-card" onclick="openModal('lofoten')">
+            <img src="assets/images/dest_norway_lofoten_1790947009870.jpg" alt="Lofoten Islands" loading="lazy">
+            <div class="destination-card-scrim"></div>
+            <span class="card-category-badge">ARCTIC ESCAPE</span>
+            <div class="card-arrow-btn">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </div>
+
+            <div class="card-glass-panel">
+              <div class="card-meta-row">
+                <span class="card-country-kicker">NORWAY</span>
+                <span class="card-season-text">Midnight Sun & Aurora</span>
+              </div>
+              <h3 class="card-location-title">Lofoten Islands</h3>
+              <p class="card-description">Rugged peaks, quiet fishing villages, and endless Arctic horizons.</p>
+              <div class="card-action-bar">
+                <span style="color: rgba(248,245,240,0.65);">Sanctuary</span>
+                <span class="card-action-link">EXPLORE DESTINATION →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Geirangerfjord Card -->
+          <div class="destination-card" onclick="openModal('geirangerfjord')">
+            <img src="assets/images/dest_norway_geirangerfjord_1790947030325.jpg" alt="Geirangerfjord" loading="lazy">
+            <div class="destination-card-scrim"></div>
+            <span class="card-category-badge">FJORD COUNTRY</span>
+            <div class="card-arrow-btn">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </div>
+
+            <div class="card-glass-panel">
+              <div class="card-meta-row">
+                <span class="card-country-kicker">NORWAY</span>
+                <span class="card-season-text">May – October</span>
+              </div>
+              <h3 class="card-location-title">Geirangerfjord</h3>
+              <p class="card-description">Towering cliffs, emerald waters, and waterfalls carved into the landscape.</p>
+              <div class="card-action-bar">
+                <span style="color: rgba(248,245,240,0.65);">Sanctuary</span>
+                <span class="card-action-link">EXPLORE DESTINATION →</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tromso Card -->
+          <div class="destination-card" onclick="openModal('tromso')">
+            <img src="assets/images/dest_norway_tromso_1790947045401.jpg" alt="Tromsø & The Arctic" loading="lazy">
+            <div class="destination-card-scrim"></div>
+            <span class="card-category-badge">ARCTIC NORTH</span>
+            <div class="card-arrow-btn">
+              <svg width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="7 7 17 7 17 17"/></svg>
+            </div>
+
+            <div class="card-glass-panel">
+              <div class="card-meta-row">
+                <span class="card-country-kicker">NORWAY</span>
+                <span class="card-season-text">Aurora Season</span>
+              </div>
+              <h3 class="card-location-title">Tromsø & The Arctic</h3>
+              <p class="card-description">Chase northern lights beneath vast skies at the edge of the Arctic.</p>
+              <div class="card-action-bar">
+                <span style="color: rgba(248,245,240,0.65);">Sanctuary</span>
+                <span class="card-action-link">EXPLORE DESTINATION →</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Small Feature Strip Bar -->
+        <div class="feature-strip">
+          <div class="feature-strip-item">
+            <div class="feature-strip-header" style="color: #F4A58A;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>
+              <span>01 — UNFORGETTABLE LANDSCAPES</span>
+            </div>
+            <p class="feature-strip-p">From dramatic fjords to remote Arctic islands.</p>
+          </div>
+
+          <div class="feature-strip-item">
+            <div class="feature-strip-header" style="color: #F5B95B;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"/></svg>
+              <span>02 — CURATED EXPERIENCES</span>
+            </div>
+            <p class="feature-strip-p">Thoughtfully designed journeys beyond the usual routes.</p>
+          </div>
+
+          <div class="feature-strip-item">
+            <div class="feature-strip-header" style="color: #7779A8;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>03 — TRAVEL AT YOUR PACE</span>
+            </div>
+            <p class="feature-strip-p">Leave room for detours, discovery, and unexpected moments.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 3. CURATED TOURS ================= -->
+    <section class="section-wrap" id="tours">
+      <div class="section-container">
+        <div style="display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px; padding-bottom: 24px; border-bottom: 1px solid rgba(255,255,255,0.14);">
+          <div>
+            <span class="section-kicker" style="color: #F5B95B;">Intimate Expeditions</span>
+            <h2 class="section-header-title">CURATED TOURS</h2>
+          </div>
+          <p class="section-desc">
+            Hand-crafted journeys designed around seasonal light, private fjord passages, and Arctic silence.
+          </p>
+        </div>
+
+        <div class="tours-grid">
+          <!-- Tour 1 -->
+          <div class="tour-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span class="tour-tag-pill">SIGNATURE EXPEDITION</span>
+                <span class="tour-duration">8 DAYS · 7 NIGHTS</span>
+              </div>
+              <h3 class="tour-card-title">The Fjords & Hidden Valleys</h3>
+              <p class="tour-card-desc">Journey through Norway's legendary fjords, mountain roads, and quiet valleys.</p>
+            </div>
+
+            <div class="tour-card-footer">
+              <span style="font-size: 11px; color: rgba(248,245,240,0.6);">Late Spring – Autumn</span>
+              <button type="button" class="btn-tour-inquire" onclick="selectInquiry('The Fjords & Hidden Valleys')">
+                <span>EXPLORE ITINERARY</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tour 2 -->
+          <div class="tour-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span class="tour-tag-pill">PRIVATE VOYAGE</span>
+                <span class="tour-duration">6 DAYS · 5 NIGHTS</span>
+              </div>
+              <h3 class="tour-card-title">Lofoten: Edge of the Arctic</h3>
+              <p class="tour-card-desc">Discover remote islands, fishing villages, dramatic peaks, and Arctic horizons.</p>
+            </div>
+
+            <div class="tour-card-footer">
+              <span style="font-size: 11px; color: rgba(248,245,240,0.6);">Midnight Sun & Aurora</span>
+              <button type="button" class="btn-tour-inquire" onclick="selectInquiry('Lofoten: Edge of the Arctic')">
+                <span>EXPLORE ITINERARY</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Tour 3 -->
+          <div class="tour-card">
+            <div>
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <span class="tour-tag-pill">ARCTIC OBSERVATORY</span>
+                <span class="tour-duration">5 DAYS · 4 NIGHTS</span>
+              </div>
+              <h3 class="tour-card-title">Chasing the Northern Lights</h3>
+              <p class="tour-card-desc">Follow the darkness north and experience the Aurora beneath Norway's winter sky.</p>
+            </div>
+
+            <div class="tour-card-footer">
+              <span style="font-size: 11px; color: rgba(248,245,240,0.6);">Polar Season (Oct – Mar)</span>
+              <button type="button" class="btn-tour-inquire" onclick="selectInquiry('Chasing the Northern Lights')">
+                <span>EXPLORE ITINERARY</span>
+                <span>→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 4. TRAVEL AS POETRY (ABOUT) ================= -->
+    <section class="section-wrap" id="about">
+      <div class="section-container" style="max-width: 1100px;">
+        <div style="text-align: center; max-width: 640px; margin: 0 auto 60px auto;">
+          <span class="section-kicker" style="color: #7779A8;">THE NORWEGIAN JOURNEY · TRAVEL AS POETRY</span>
+          <h2 class="section-header-title" style="margin-bottom: 16px;">WHERE THE WORLD FEELS WILDER</h2>
+          <div style="width: 50px; height: 1px; background: rgba(255,255,255,0.25); margin: 0 auto;"></div>
+        </div>
+
+        <div class="about-story-grid">
+          <div class="about-story-text">
+            <p>
+              We believe travel is not measured in miles, but in the moments that make you stop and look. In Norway, the journey unfolds through quiet fjords, winding mountain roads, and skies that seem to stretch forever.
+            </p>
+            <p>
+              Every landscape tells a different story. Follow the coastline into hidden villages, cross valleys beneath towering peaks, or wait beneath Arctic skies for the northern lights to appear.
+            </p>
+            <div style="padding-top: 8px;">
+              <span style="font-family: monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: #F4A58A;">
+                — THE ESSENCE OF NORWAY
+              </span>
+            </div>
+          </div>
+
+          <div class="principles-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.12); padding-bottom: 14px;">
+              <h3 style="font-size: 18px; font-weight: 700; color: #F8F5F0;">Our Guiding Principles</h3>
+              <span style="font-family: monospace; font-size: 10px; letter-spacing: 0.2em; color: rgba(248,245,240,0.55);">NORWAY</span>
+            </div>
+
+            <div class="principle-item">
+              <h4 class="principle-title">
+                <span style="color: #F4A58A; font-family: monospace; font-size: 12px;">01 —</span>
+                <span>Authentic Exploration</span>
+              </h4>
+              <p class="principle-desc">Discover Norway beyond the familiar landmarks.</p>
+            </div>
+
+            <div class="principle-item">
+              <h4 class="principle-title">
+                <span style="color: #F5B95B; font-family: monospace; font-size: 12px;">02 —</span>
+                <span>Responsible Travel</span>
+              </h4>
+              <p class="principle-desc">Respect local communities, landscapes, and wildlife.</p>
+            </div>
+
+            <div class="principle-item">
+              <h4 class="principle-title">
+                <span style="color: #7779A8; font-family: monospace; font-size: 12px;">03 —</span>
+                <span>Unhurried Journeys</span>
+              </h4>
+              <p class="principle-desc">Leave space for detours, quiet moments, and discovery.</p>
+            </div>
+
+            <div class="principle-item">
+              <h4 class="principle-title">
+                <span style="color: rgba(248,245,240,0.95); font-family: monospace; font-size: 12px;">04 —</span>
+                <span>Nature First</span>
+              </h4>
+              <p class="principle-desc">Let the landscape shape the journey.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 5. BEGIN YOUR JOURNEY (CONTACT & INQUIRIES) ================= -->
+    <section class="section-wrap" id="contact">
+      <div class="section-container" style="max-width: 960px;">
+        <div style="text-align: center; margin-bottom: 48px;">
+          <span class="section-kicker">BEGIN YOUR NORWEGIAN JOURNEY</span>
+          <h2 class="section-header-title" style="margin-bottom: 12px;">YOUR NEXT ADVENTURE AWAITS</h2>
+          <p class="section-desc" style="margin: 0 auto;">
+            Tell us what inspires your journey. We'll help you shape an experience around it.
+          </p>
+        </div>
+
+        <div class="contact-card">
+          <div id="inquirySuccess" style="display: none; text-align: center; padding: 40px 20px;">
+            <div style="width: 64px; height: 64px; border-radius: 50%; background: rgba(16, 185, 129, 0.2); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.4); display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto;">
+              <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <h3 style="font-size: 26px; font-weight: 700; color: #F8F5F0; margin-bottom: 10px;">Velkommen til Norge</h3>
+            <p style="font-size: 14px; color: rgba(248,245,240,0.85); max-width: 460px; margin: 0 auto 24px auto; line-height: 1.6;">
+              Your journey request has been received. Our Norwegian expedition specialist will be in touch within 24 hours with your bespoke itinerary.
+            </p>
+            <button type="button" class="btn-primary" onclick="resetInquiryForm()">Send Another Inquiry</button>
+          </div>
+
+          <form id="inquiryForm" onsubmit="handleInquirySubmit(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">YOUR FULL NAME</label>
+                <input type="text" class="form-input" placeholder="Your name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label">EMAIL ADDRESS</label>
+                <input type="email" class="form-input" placeholder="you@example.com" required>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-group">
+                <label class="form-label">DESTINATION OF INTEREST</label>
+                <input type="text" id="formDestination" class="form-input" value="Lofoten Islands" placeholder="Lofoten, Bergen, Tromsø...">
+              </div>
+              <div class="form-group">
+                <label class="form-label">ANTICIPATED TIMELINE</label>
+                <input type="text" class="form-input" placeholder="Summer 2027">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom: 24px;">
+              <label class="form-label">PERSONAL WISHES & TRAVEL STYLE</label>
+              <textarea class="form-textarea" rows="4" placeholder="Tell us about your ideal journey, interests, or places you'd love to discover..."></textarea>
+            </div>
+
+            <div class="form-submit-row">
+              <span style="font-size: 11px; color: rgba(248,245,240,0.55);">
+                Discretion & environmental stewardship unconditionally observed.
+              </span>
+              <button type="submit" class="btn-submit">
+                <span>START MY JOURNEY</span>
+                <span>→</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= 6. FOOTER ================= -->
+    <footer id="footer">
+      <div class="footer-container">
+        <div>
+          <a href="#hero" class="brand-logo" style="margin-bottom: 6px; display: inline-block;">TRAVEL</a>
+          <p style="color: rgba(248,245,240,0.55); font-size: 11px;">
+            Curated journeys through Norway's landscapes, cultures, and hidden places.
+          </p>
+        </div>
+
+        <div style="display: flex; gap: 26px; text-transform: uppercase; font-weight: 600; font-size: 11px;">
+          <a href="#destinations" style="color: inherit; text-decoration: none;">Destinations</a>
+          <a href="#tours" style="color: inherit; text-decoration: none;">Tours</a>
+          <a href="#about" style="color: inherit; text-decoration: none;">About</a>
+          <a href="#contact" style="color: inherit; text-decoration: none;">Contact</a>
+        </div>
+
+        <div style="font-family: monospace; color: rgba(248,245,240,0.45); font-size: 11px;">
+          © 2026 TRAVEL · NORWAY
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- ================= DESTINATION DETAILS MODAL ================= -->
+  <div class="modal-backdrop" id="destinationModal" onclick="closeModal(event)">
+    <div class="modal-card" id="modalCard">
+      <div class="modal-hero-image">
+        <img id="modalImg" src="" alt="Destination">
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, #0B1424 0%, rgba(11,20,36,0.25) 50%, transparent 100%);"></div>
+        <button class="modal-close-btn" onclick="closeModalDirect()">✕</button>
+
+        <div style="position: absolute; bottom: 24px; left: 32px; right: 32px;">
+          <span id="modalCountryCategory" style="font-size: 11px; font-weight: 700; letter-spacing: 0.25em; text-transform: uppercase; color: #F4A58A;">NORWAY</span>
+          <h2 id="modalTitle" style="font-size: 32px; font-weight: 800; color: #F8F5F0; margin-top: 4px;">Destination</h2>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <p id="modalDesc" style="font-size: 15px; color: rgba(248,245,240,0.85); line-height: 1.65; margin-bottom: 24px;">Description</p>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 28px;">
+          <div style="padding: 16px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #F4A58A; margin-bottom: 4px;">PRIME SEASON</div>
+            <p id="modalSeason" style="font-size: 13px; font-weight: 600; color: #F8F5F0;">Spring & Summer</p>
+          </div>
+          <div style="padding: 16px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #F5B95B; margin-bottom: 4px;">EXPERIENCE</div>
+            <p style="font-size: 13px; font-weight: 600; color: #F8F5F0;">Bespoke Private Sanctuary</p>
+          </div>
+          <div style="padding: 16px; border-radius: 14px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.18);">
+            <div style="font-size: 11px; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #7779A8; margin-bottom: 4px;">CURATION</div>
+            <p style="font-size: 13px; font-weight: 600; color: #F8F5F0;">VIP Concierge Access</p>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 28px;">
+          <h4 style="font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; color: rgba(248,245,240,0.65); margin-bottom: 12px;">CURATED HIGHLIGHTS</h4>
+          <ul id="modalHighlights" style="list-style: none; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; font-size: 13px; color: rgba(248,245,240,0.85);">
+          </ul>
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(255,255,255,0.14); padding-top: 20px;">
+          <button type="button" onclick="closeModalDirect()" style="background: none; border: none; color: rgba(248,245,240,0.65); font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.15em; cursor: pointer;">Close</button>
+          <button type="button" id="btnModalBook" class="btn-primary" style="padding: 12px 24px;">Inquire About This Journey →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= JAVASCRIPT: FIXED SCROLL ENGINE & INTERACTIONS ================= -->
+  <script>
+    (function () {
+      const TOTAL_FRAMES = 240;
+      const FOLDER_NAME = 'frames';
+      const canvas = document.getElementById('frameCanvas');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const mainNav = document.getElementById('mainNav');
+      const loader = document.getElementById('loader');
+      const progressBar = document.getElementById('progressBar');
+
+      const frames = new Array(TOTAL_FRAMES);
+      let loadedCount = 0;
+      let lastRenderedIndex = -1;
+
+      // Smooth lerp progress (0.0 to 1.0)
+      let targetProgress = 0;
+      let currentProgress = 0;
+      const LERP_FACTOR = 0.1;
+
+      // Configure Retina / HiDPI canvas covering full viewport
+      function resizeCanvas() {
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+
+        const frameIndex = calculateFrameIndex(currentProgress);
+        renderFrame(frameIndex);
+      }
+
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+
+      // Object-fit: cover drawing
+      function drawCover(img) {
+        if (!img || !img.complete || img.naturalWidth === 0) return;
+
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const iw = img.naturalWidth;
+        const ih = img.naturalHeight;
+
+        const scale = Math.max(cw / iw, ch / ih);
+        const w = iw * scale;
+        const h = ih * scale;
+        const x = (cw - w) * 0.5;
+        const y = (ch - h) * 0.5;
+
+        ctx.drawImage(img, x, y, w, h);
+      }
+
+      // Nearest-frame fallback prevents any blank flashes while images stream in
+      function renderFrame(index) {
+        if (frames[index] && frames[index].complete && frames[index].naturalWidth > 0) {
+          drawCover(frames[index]);
+          lastRenderedIndex = index;
+          return;
+        }
+
+        for (let i = 1; i < TOTAL_FRAMES; i++) {
+          const prev = index - i;
+          if (prev >= 0 && frames[prev] && frames[prev].complete && frames[prev].naturalWidth > 0) {
+            drawCover(frames[prev]);
+            lastRenderedIndex = prev;
+            return;
+          }
+          const next = index + i;
+          if (next < TOTAL_FRAMES && frames[next] && frames[next].complete && frames[next].naturalWidth > 0) {
+            drawCover(frames[next]);
+            lastRenderedIndex = next;
+            return;
+          }
+        }
+      }
+
+      // Maps scroll progress across entire page:
+      // - At scroll = 0 (Hero): frame 1 (looking out airplane window)
+      // - First ~700px (leaving hero): flies through window into golden clouds (frames 1 to 180)
+      // - Remaining page (Destinations, Tours, Poetry, Contact, Footer): cruising over sunset clouds (frames 180 to 240)
+      function calculateFrameIndex(progress) {
+        let frameRatio;
+        if (progress < 0.22) {
+          // 0% to 22% of page scroll maps to frames 0 to 180 (airplane cabin through window into open clouds)
+          frameRatio = (progress / 0.22) * (180 / 239);
+        } else {
+          // Remaining 78% of page scroll glides through the golden clouds (frames 180 to 239)
+          frameRatio = (180 / 239) + ((progress - 0.22) / 0.78) * (59 / 239);
+        }
+        return Math.min(TOTAL_FRAMES - 1, Math.max(0, Math.round(frameRatio * (TOTAL_FRAMES - 1))));
+      }
+
+      function updateScrollProgress() {
+        const scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+        const docHeight = Math.max(
+          document.body.scrollHeight,
+          document.documentElement.scrollHeight,
+          document.body.offsetHeight,
+          document.documentElement.offsetHeight
+        );
+        const maxScroll = Math.max(1, docHeight - window.innerHeight);
+
+        targetProgress = Math.min(1, Math.max(0, scrollY / maxScroll));
+
+        // Header glassmorphism blur on scroll
+        if (scrollY > 40) {
+          mainNav.classList.add('scrolled');
+        } else {
+          mainNav.classList.remove('scrolled');
+        }
+
+        // Highlight active nav item
+        updateActiveNav();
+      }
+
+      window.addEventListener('scroll', updateScrollProgress, { passive: true });
+
+      // Highlight active nav item as user scrolls through sections
+      function updateActiveNav() {
+        const sections = ['destinations', 'tours', 'about', 'contact'];
+        const scrollPos = window.scrollY + 200;
+        let currentSec = '';
+
+        for (const secId of sections) {
+          const el = document.getElementById(secId);
+          if (el) {
+            const top = el.offsetTop;
+            const h = el.offsetHeight;
+            if (scrollPos >= top && scrollPos < top + h) {
+              currentSec = secId;
+              break;
+            }
+          }
+        }
+
+        document.querySelectorAll('.nav-link').forEach(link => {
+          if (link.dataset.section === currentSec) {
+            link.classList.add('active');
+          } else {
+            link.classList.remove('active');
+          }
+        });
+      }
+
+      // Master 60fps render loop
+      function loop() {
+        const delta = targetProgress - currentProgress;
+        if (Math.abs(delta) > 0.00004) {
+          currentProgress += delta * LERP_FACTOR;
+        } else {
+          currentProgress = targetProgress;
+        }
+
+        const frameIndex = calculateFrameIndex(currentProgress);
+
+        if (frameIndex !== lastRenderedIndex) {
+          renderFrame(frameIndex);
+        }
+
+        requestAnimationFrame(loop);
+      }
+
+      function getFrameSrc(index1Based) {
+        const padded = String(index1Based).padStart(3, '0');
+        return `${FOLDER_NAME}/ezgif-frame-${padded}.jpg`;
+      }
+
+      function createFrame(frameNum, onComplete) {
+        const img = new Image();
+        const idx = frameNum - 1;
+
+        img.onload = () => {
+          loadedCount++;
+          frames[idx] = img;
+          progressBar.style.width = `${Math.min(100, (loadedCount / TOTAL_FRAMES) * 100)}%`;
+          if (loadedCount >= TOTAL_FRAMES) {
+            setTimeout(() => loader.classList.add('loader-hidden'), 250);
+          }
+          if (onComplete) onComplete();
+        };
+
+        img.onerror = () => {
+          loadedCount++;
+          if (onComplete) onComplete();
+        };
+
+        img.src = getFrameSrc(frameNum);
+      }
+
+      // Fast streaming: frame 1 immediate, then keyframes, then rest
+      function loadAllFrames() {
+        createFrame(1, () => {
+          renderFrame(0);
+        });
+
+        const keyframes = [];
+        for (let i = 2; i <= TOTAL_FRAMES; i += 6) {
+          keyframes.push(i);
+        }
+
+        function loadBatch(list, done) {
+          if (list.length === 0) {
+            if (done) done();
+            return;
+          }
+          let count = 0;
+          list.forEach(num => {
+            if (frames[num - 1]) {
+              count++;
+              if (count === list.length && done) done();
+              return;
+            }
+            createFrame(num, () => {
+              count++;
+              if (count === list.length && done) done();
+            });
+          });
+        }
+
+        loadBatch(keyframes, () => {
+          const rest = [];
+          for (let i = 2; i <= TOTAL_FRAMES; i++) {
+            if (!frames[i - 1]) {
+              rest.push(i);
+            }
+          }
+          loadBatch(rest, () => {
+            progressBar.style.width = '100%';
+            setTimeout(() => loader.classList.add('loader-hidden'), 250);
+          });
+        });
+      }
+
+      // Flight sequence auto-trigger button
+      let isFlyingAuto = false;
+      const btnFlight = document.getElementById('btnFlightSequence');
+      const flightText = document.getElementById('flightSeqText');
+
+      if (btnFlight) {
+        btnFlight.addEventListener('click', () => {
+          if (isFlyingAuto) return;
+          isFlyingAuto = true;
+          flightText.textContent = 'Flying...';
+
+          const destSec = document.getElementById('destinations');
+          const targetScroll = destSec ? destSec.offsetTop - 50 : 800;
+          const startScroll = window.scrollY;
+          const duration = 2500;
+          const startTime = performance.now();
+
+          function stepScroll(now) {
+            const elapsed = now - startTime;
+            const t = Math.min(1, elapsed / duration);
+            const ease = t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            window.scrollTo(0, startScroll + (targetScroll - startScroll) * ease);
+
+            if (t < 1) {
+              requestAnimationFrame(stepScroll);
+            } else {
+              isFlyingAuto = false;
+              flightText.textContent = 'Flight Transition';
+            }
+          }
+
+          requestAnimationFrame(stepScroll);
+        });
+      }
+
+      // Vertical slide buttons
+      document.querySelectorAll('.slide-number-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.slide-number-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const slide = btn.dataset.slide;
+          if (slide === '01' || slide === '02' || slide === '03') {
+            document.getElementById('destinations').scrollIntoView({ behavior: 'smooth' });
+          } else if (slide === '04') {
+            document.getElementById('tours').scrollIntoView({ behavior: 'smooth' });
+          }
+        });
+      });
+
+      // Initialize
+      resizeCanvas();
+      updateScrollProgress();
+      loadAllFrames();
+      requestAnimationFrame(loop);
+    })();
+
+    // ================= MODAL & FORM INTERACTIONS =================
+    const destinationData = {
+      lofoten: {
+        country: 'NORWAY',
+        category: 'ARCTIC ESCAPE',
+        title: 'Lofoten Islands',
+        desc: 'Rugged peaks, quiet fishing villages, and endless Arctic horizons. Nestled above the Arctic Circle, Lofoten offers dramatic fjords, pristine beaches, and traditional red rorbu fisherman cabins.',
+        image: 'assets/images/dest_norway_lofoten_1790947009870.jpg',
+        season: 'Midnight Sun: May–Jul · Aurora: Sep–Apr',
+        highlights: [
+          'Private stay in restored historical red rorbu cabins',
+          'Sea kayak expeditions through Reinefjorden mirror waters',
+          'Private rib boat safari to spot sea eagles and orcas',
+          'Midnight sun vantage hike over Ryten and Kvalvika Beach'
+        ]
+      },
+      geirangerfjord: {
+        country: 'NORWAY',
+        category: 'FJORD COUNTRY',
+        title: 'Geirangerfjord',
+        desc: 'Towering cliffs, emerald waters, and waterfalls carved into the landscape. Recognized by UNESCO, Geirangerfjord represents the purest essence of Scandinavian dramatic geology.',
+        image: 'assets/images/dest_norway_geirangerfjord_1790947030325.jpg',
+        season: 'May – October',
+        highlights: [
+          'Private silent electric yacht charter through the fjord',
+          'Helicopter flight over Seven Sisters and Suitor waterfalls',
+          'Cliffside mountain farm visit with artisan goat cheeses',
+          'Panoramic drive along Trollstigen serpentine mountain pass'
+        ]
+      },
+      tromso: {
+        country: 'NORWAY',
+        category: 'ARCTIC NORTH',
+        title: 'Tromsø & The Arctic',
+        desc: 'Chase northern lights beneath vast skies at the edge of the Arctic. An ethereal winter wonderland of snow-capped mountains, dog sledding trails, and deep polar starry nights.',
+        image: 'assets/images/dest_norway_tromso_1790947045401.jpg',
+        season: 'Aurora Season: September – April',
+        highlights: [
+          'Private Aurora glamping camp away from all light pollution',
+          'Husky sledding across snow-covered Arctic valleys',
+          'Sámi cultural storytelling, reindeer sanctuary, and lavvu campfire',
+          'Arctic fjord catamaran cruise under starry polar night'
+        ]
+      }
+    };
+
+    function openModal(destKey) {
+      const data = destinationData[destKey];
+      if (!data) return;
+
+      document.getElementById('modalImg').src = data.image;
+      document.getElementById('modalCountryCategory').textContent = `${data.country} · ${data.category}`;
+      document.getElementById('modalTitle').textContent = data.title;
+      document.getElementById('modalDesc').textContent = data.desc;
+      document.getElementById('modalSeason').textContent = data.season;
+
+      const ul = document.getElementById('modalHighlights');
+      ul.innerHTML = data.highlights.map(h => `
+        <li style="display: flex; align-items: center; gap: 8px;">
+          <span style="width: 6px; height: 6px; border-radius: 50%; background: #F4A58A;"></span>
+          <span>${h}</span>
+        </li>
+      `).join('');
+
+      document.getElementById('btnModalBook').onclick = () => {
+        closeModalDirect();
+        selectInquiry(data.title);
+      };
+
+      const modal = document.getElementById('destinationModal');
+      modal.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(e) {
+      if (e.target.id === 'destinationModal') {
+        closeModalDirect();
+      }
+    }
+
+    function closeModalDirect() {
+      const modal = document.getElementById('destinationModal');
+      modal.classList.remove('active');
+      document.body.style.overflow = '';
+    }
+
+    function selectInquiry(destinationName) {
+      const input = document.getElementById('formDestination');
+      if (input) {
+        input.value = destinationName;
+      }
+      const contactSec = document.getElementById('contact');
+      if (contactSec) {
+        contactSec.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    function handleInquirySubmit(e) {
+      e.preventDefault();
+      document.getElementById('inquiryForm').style.display = 'none';
+      document.getElementById('inquirySuccess').style.display = 'block';
+    }
+
+    function resetInquiryForm() {
+      document.getElementById('inquiryForm').reset();
+      document.getElementById('inquiryForm').style.display = 'block';
+      document.getElementById('inquirySuccess').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
